@@ -1,0 +1,50 @@
+.Card {
+  margin-top: 20px;
+
+  width: 100%;
+  max-height: 700px;
+  .card_head {
+    padding: 0 20px;
+    background-color: white;
+    min-height: 40px;
+    width: 100%;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    .card_head_left_part {
+      padding-top: 16px;
+      display: flex;
+      .creator_main {
+        padding-right: 24px;
+        font-weight: 500;
+      }
+    }
+
+    .card_content {
+      padding: 16px 0;
+      .title {
+        font-weight: 500;
+        font-size: 22px;
+      }
+      .content {
+        padding: 16px 12px 0 0;
+      }
+    }
+  }
+
+  .img_background {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: center;
+    .img_container {
+     
+      
+    }
+
+  }
+  .card_footer {
+    background-color: white;
+    min-height: 40px;
+    width: 100%;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+  }
+}
