@@ -35,6 +35,8 @@ export default async function Home() {
 
   const responseAllNewsRating = await graphqlClient.request(AllNewsByRating, {
     sortType: SortType.Desc,
+  }).catch(e=>{
+    
   });
 
   return (

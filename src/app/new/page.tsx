@@ -32,7 +32,9 @@ export default async function Home() {
     }
   `);
 
-  const responseAllNews = await graphqlClient.request(AllNews);
+  const responseAllNews = await graphqlClient.request(AllNews).catch(e=>{
+    
+  });
 
   return (
     <main className={styles.main}>

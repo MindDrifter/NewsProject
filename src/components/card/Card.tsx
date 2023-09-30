@@ -46,7 +46,6 @@ export default async function Card({ author, group, title, content }: props) {
             width={0}
             height={0}
             sizes="100"
-            layout="responsive"
             style={{ width: "100%", height: "auto" }} // optional
             placeholder="blur"
           />

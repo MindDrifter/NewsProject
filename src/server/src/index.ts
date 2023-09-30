@@ -17,6 +17,17 @@ import bodyParser from 'body-parser';
 import { expressMiddleware } from '@apollo/server/express4';
 import path, {dirname} from 'path';
 
+import jwt from 'jsonwebtoken';
+
+// const token = jwt.sign({login:'mark',password:'baby'}, 'sercret', {expiresIn:"10s"})
+// console.log(token);
+// setTimeout(()=>
+// {jwt.verify(token, 'sercret', (err, decoded)=>{
+//   console.log(decoded);
+//   console.log(err);
+  
+// })}, 5000)
+
 
 type SortType = {
   sortType: 'desc' | 'asc'
@@ -48,6 +59,17 @@ type NewsInput = {
     content: string
   }
 }
+
+type UserInput = {
+  user:{
+   name:string,
+   password:string
+  }
+}
+
+type Context = {
+  token:string
+ }
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
@@ -71,13 +93,24 @@ const typeDefs = `#graphql
     content: String
   }
 
+  input UserInput {
+    name: String
+    password: String
+  }
+
   type ResponseMessage{
     message:String!
     status:Int!
   }
 
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Group {
+  type ResponseMessageWithToken{
+    message:String!
+    status:Int!
+    accessToken:String!
+    refreshToken:String!
+  }
+
+    type Group {
     id:ID!
     name:String!
   }
@@ -120,23 +153,29 @@ const typeDefs = `#graphql
     AllNews: [News],
     AllNewsByRating (sortType:SortType!): [News],
     NewsById (id: ID!):News,
-    UploadImage(id: ImageType): ImageType
+    UploadImage(id: ImageType): ImageType,
+    UserInformation: Author
     
   }
 
   type Mutation {
-    CreateNews (news: NewsInput): ResponseMessage
+    CreateNews (news: NewsInput): ResponseMessage,
+    CreateUser (user: UserInput): ResponseMessageWithToken
   }
 `;
 
 const author =[
   {
     id:0,
-    name:'Kate Chopin'
+    name:'Kate Chopin',
+    accessToken:'',
+    refreshToken:''
   },
   {
     id:1,
-    name:'Mike Chopin'
+    name:'Mike Chopin',
+    accessToken:'',
+    refreshToken:''
   },
 ]
 
@@ -241,8 +280,10 @@ const imageType = new GraphQLScalarType ({
 const resolvers = {
   ImageType:imageType,
   Query: {
-    AllNews: () => {
+    AllNews: (_,__,context:Context) => {
       console.log('fetching')
+      // console.log(context);
+      
       return [...newsData].reverse()
     },
     AllNewsByRating: (_, {sortType}:SortType) => {
@@ -256,11 +297,17 @@ const resolvers = {
     UploadImage: (_, args) =>{
       console.log(args)
       return imageType},
+    UserInformation: (_,__,context:{token:string})=>{
+     
+      const userData = jwt.verify(context.token,'secret') as {user:string}
+      console.log(userData, 'NEW');
+      return {name:userData.user}
+      
+    }
     
   },
   Mutation:{
     CreateNews: (_, {news}:NewsInput)=>{console.log(news);
-   
       newsData.push({
         id: Date.now(),
         ...news,
@@ -273,6 +320,19 @@ const resolvers = {
       console.log(newsData);
       
       return {message:"News created", status:200}
+    },
+    CreateUser: (_, {user}:UserInput, context:Context)=>{
+      
+      console.log(context);
+      const accessToken = jwt.sign({user:user.name, password:user.password}, 'secret',{expiresIn:'10h'} )
+      const refreshToken = jwt.sign({user:user.name, password:user.password}, 'secret',{expiresIn:'30d'})
+      author.push({
+        id:2,
+        name:user.name,
+        accessToken: accessToken, 
+        refreshToken
+      })
+      return {message:'User created', status:200, accessToken:accessToken, refreshToken:refreshToken}
     }
   }
   
@@ -302,10 +362,13 @@ app.use(
   // an Apollo Server instance and optional configuration options
   expressMiddleware(server, {
     context: async ({ req }) => ({ 
-      token: req.headers.token  
+      // token: req.headers.token 
+      token: req.headers.accesstoken
     }),
-
+    
   }),
+  
+  
 )
 
 

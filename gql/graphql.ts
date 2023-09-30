@@ -41,11 +41,17 @@ export type Group = {
 export type Mutation = {
   __typename?: 'Mutation';
   CreateNews?: Maybe<ResponseMessage>;
+  CreateUser?: Maybe<ResponseMessageWithToken>;
 };
 
 
 export type MutationCreateNewsArgs = {
   news?: InputMaybe<NewsInput>;
+};
+
+
+export type MutationCreateUserArgs = {
+  user?: InputMaybe<UserInput>;
 };
 
 export type News = {
@@ -80,6 +86,7 @@ export type Query = {
   AllNewsByRating?: Maybe<Array<Maybe<News>>>;
   NewsById?: Maybe<News>;
   UploadImage?: Maybe<Scalars['Image']['output']>;
+  UserInformation?: Maybe<Author>;
 };
 
 
@@ -103,10 +110,23 @@ export type ResponseMessage = {
   status: Scalars['Int']['output'];
 };
 
+export type ResponseMessageWithToken = {
+  __typename?: 'ResponseMessageWithToken';
+  accessToken: Scalars['String']['output'];
+  message: Scalars['String']['output'];
+  refreshToken: Scalars['String']['output'];
+  status: Scalars['Int']['output'];
+};
+
 export enum SortType {
   Asc = 'asc',
   Desc = 'desc'
 }
+
+export type UserInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+};
 
 export type AllNewsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -120,6 +140,20 @@ export type AllNewsByRatingQueryVariables = Exact<{
 
 export type AllNewsByRatingQuery = { __typename?: 'Query', AllNewsByRating?: Array<{ __typename?: 'News', id: string, group?: string | null, author?: string | null, authorImage?: string | null, title?: string | null, image?: string | null, content?: string | null, commentsId?: Array<number | null> | null, likes: number } | null> | null };
 
+export type CreateUserMutationVariables = Exact<{
+  user?: InputMaybe<UserInput>;
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', CreateUser?: { __typename?: 'ResponseMessageWithToken', message: string, accessToken: string, refreshToken: string } | null };
+
+export type UserInformationQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserInformationQuery = { __typename?: 'Query', UserInformation?: { __typename?: 'Author', name: string } | null };
+
 
 export const AllNewsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllNews"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"AllNews"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"group"}},{"kind":"Field","name":{"kind":"Name","value":"author"}},{"kind":"Field","name":{"kind":"Name","value":"authorImage"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"commentsId"}},{"kind":"Field","name":{"kind":"Name","value":"likes"}}]}}]}}]} as unknown as DocumentNode<AllNewsQuery, AllNewsQueryVariables>;
 export const AllNewsByRatingDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"AllNewsByRating"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sortType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SortType"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"AllNewsByRating"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"sortType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sortType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"group"}},{"kind":"Field","name":{"kind":"Name","value":"author"}},{"kind":"Field","name":{"kind":"Name","value":"authorImage"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"image"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"commentsId"}},{"kind":"Field","name":{"kind":"Name","value":"likes"}}]}}]}}]} as unknown as DocumentNode<AllNewsByRatingQuery, AllNewsByRatingQueryVariables>;
+export const CreateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"user"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UserInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"CreateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"user"},"value":{"kind":"Variable","name":{"kind":"Name","value":"user"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"accessToken"}},{"kind":"Field","name":{"kind":"Name","value":"refreshToken"}}]}}]}}]} as unknown as DocumentNode<CreateUserMutation, CreateUserMutationVariables>;
+export const UserInformationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UserInformation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"UserInformation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UserInformationQuery, UserInformationQueryVariables>;
